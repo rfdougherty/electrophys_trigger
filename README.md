@@ -12,21 +12,29 @@ The server will encode the timestamps it receives from the client into a single 
 
 ## Dependencies
 
-You'll need Arduino installed and [configured for ESP32 delvelopment](https://github.com/espressif/arduino-esp32#installation-instructions). In addition, there's a modified [NTPClient librabry](https://travis-ci.org/arduino-libraries/NTPClient) that adds millisecond-support for unix epochs. (Should probably do a proper fork of this and make it a sub-module.)
+You'll need Arduino installed and [configured for ESP32 delvelopment](https://github.com/espressif/arduino-esp32#installation-instructions). In addition, there's a modified [NTPClient librabry](https://travis-ci.org/arduino-libraries/NTPClient) that adds millisecond-support for unix epochs. (TODO: do a proper fork of this and make it a sub-module.)
 
 ## USAGE
 
 The server will start with a default configuration file which means that it probably can't connect to your WiFi. In that case, it should switch to AP mode with and open SSID at "ephys_trigger" and run a simple configration server accessible at http://192.168.4.1 that you can use to set up the network credentials and other configuration options.
 
 ### API
-
-    * curl -X GET http://192.168.4.1/config
-    * curl -X POST -H "Content-Type: application/json" --data '{"ssid":"SSID","passwd":"PASSWORD"}' http://192.168.4.1/config
-    * curl -X GET http://192.168.4.1/timestamp
-    * curl -X POST -H "Content-Type: application/json" --data '{"timestamp":681480000}' http://192.168.4.1/timestamp
-    * curl -X GET http://192.168.4.1/log
-    * curl -X GET http://192.168.4.1/log
-    * curl -X POST -H "Content-Type: application/json" --data '{"681480000\tdata1\tdata2\n"}' http://192.168.4.1/event
+    
+    # GET/POST the configuration file:
+    curl -X GET http://192.168.4.1/config
+    curl -X POST -H "Content-Type: application/json" --data '{"ssid":"SSID", "passwd":"PASSWORD", "pulseMicros":10000, "analogOut":false}' http://192.168.4.1/config
+    
+    # Get the current timestamp from the micro:
+    curl -X GET http://192.168.4.1/timestamp
+    
+    # Log a simple timestamp event:
+    curl -X POST -H "Content-Type: application/json" --data '{"timestamp":681480000}' http://192.168.4.1/timestamp
+    
+    # Log a phone event:
+    curl -X POST -H "Content-Type: application/json" --data '{"681480000\tdata1\tdata2\n"}' http://192.168.4.1/event
+    
+    # Download the full log
+    curl -X GET http://192.168.4.1/log
 
 
 
